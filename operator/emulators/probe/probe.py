@@ -48,7 +48,7 @@ def Main():
     
     # put the socket into listening mode 
     s.listen(5) 
-    print("socket is listening") 
+    print("Probe is listening") 
     # establish connection with client 
     c, addr = s.accept() 
     print('Connected to :', addr[0], ':', addr[1]) 
@@ -56,7 +56,7 @@ def Main():
     c.send(create_message('probe','You are connected to probe',3))
     wait_for_feedback(c)
     for i in range(0,message_count):
-        c.send(create_message('probe','1','1'))
+        c.send(create_message('probe',i,'1'))
         print("Sent data")
         
     c.send(create_message('probe',1,2))
