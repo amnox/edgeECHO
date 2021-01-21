@@ -1,7 +1,7 @@
 import socket 
 import json, enum
 
-message_count = 100
+message_count = 100000
 probe_ip = "127.0.0.1" 
 probe_port = 12345
 
