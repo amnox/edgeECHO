@@ -1,7 +1,7 @@
 import socket 
-import json, enum
+import json, enum,time
 
-message_count = 1000
+message_count = 100000
 probe_ip = "probe" 
 probe_port = 12345
 
@@ -63,7 +63,7 @@ def Main():
         
     c.send(create_message('probe',1,2))
     print("All messages sent, terminating connection")
-
+    time.sleep( 5 )
     s.close() 
 
 if __name__ == '__main__': 
