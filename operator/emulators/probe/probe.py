@@ -1,8 +1,8 @@
 import socket 
 import json, enum
 
-message_count = 100000
-probe_ip = "127.0.0.1" 
+message_count = 1000
+probe_ip = "probe" 
 probe_port = 12345
 
 class ProbeMessage(enum.Enum):
@@ -15,6 +15,7 @@ socket_message = {
         'type':None,
         'data':None
     }
+
 def create_message(sender, m_data, m_type):
     data = socket_message
     data['sender'] = sender
@@ -22,14 +23,15 @@ def create_message(sender, m_data, m_type):
     data['type'] = m_type
     data = json.dumps(data)+';'
     return data.encode('ascii')
+
 def form_message(data):
     print("".join(data))
     return json.loads("".join(data))
+
 def wait_for_feedback(c):
     data = []
     byte = ''
     while True:
-        
         byte = c.recv(1).decode('ascii')
         if(byte==";"):
             data = form_message(data)
@@ -39,8 +41,8 @@ def wait_for_feedback(c):
             data = []
             continue
         data.append(byte ) 
+
 def Main(): 
-    
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
     s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     s.bind((probe_ip, probe_port)) 
@@ -63,7 +65,6 @@ def Main():
     print("All messages sent, terminating connection")
 
     s.close() 
-  
-  
+
 if __name__ == '__main__': 
     Main()
