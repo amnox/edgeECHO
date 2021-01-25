@@ -31,6 +31,7 @@ Python SDK
 
 
 
-docker network create client_server_network
-docker run --network-alias server --network client_server_network -it amnox/probe_emulator:1.1
-docker run --network client_server_network -it amnox/streaming:1.1
+
+docker run --env probe_ip=probe --env probe_port=12345 --env count=100000 --network-alias probe --network client_server_network -it demo-probe
+docker run --env probe_ip=probe --env probe_port=12345 --env stream_ip=stream --env stream_port=12346 --env plain_stream=True --network-alias stream --network client_server_network -it demo-stream
+docker run --env stream_ip=stream --env stream_port=12346 --network client_server_network -it demo-segmentation

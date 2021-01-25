@@ -1,9 +1,9 @@
 # Import socket module 
 import socket 
-import json, enum
+import json, enum, os
 
-stream_ip = "127.0.0.2" 
-stream_port = 12346
+stream_ip = os.environ.get('stream_ip')
+stream_port = int(os.environ.get('stream_port'))
 
 socket_message = {
         'sender':'stream',

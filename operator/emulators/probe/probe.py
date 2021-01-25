@@ -1,9 +1,9 @@
 import socket 
-import json, enum,time
+import json, enum,time, os
 
-message_count = 100000
-probe_ip = "probe" 
-probe_port = 12345
+message_count = int(os.environ.get('count'))
+probe_ip = os.environ.get('probe_ip')
+probe_port = int(os.environ.get('probe_port'))
 
 class ProbeMessage(enum.Enum):
    data = 1
@@ -45,7 +45,7 @@ def wait_for_feedback(c):
 def Main(): 
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
     s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    s.bind((probe_ip, probe_port)) 
+    s.bind((probe_ip, int(probe_port))) 
     print("socket binded to port", probe_port) 
     
     # put the socket into listening mode 
@@ -67,4 +67,5 @@ def Main():
     s.close() 
 
 if __name__ == '__main__': 
+    print(os.environ)
     Main()
