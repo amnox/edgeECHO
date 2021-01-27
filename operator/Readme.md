@@ -33,5 +33,39 @@ Python SDK
 
 
 docker run --env probe_ip=probe --env probe_port=12345 --env count=100000 --network-alias probe --network client_server_network -it demo-probe
+
 docker run --env probe_ip=probe --env probe_port=12345 --env stream_ip=stream --env stream_port=12346 --env plain_stream=True --network-alias stream --network client_server_network -it demo-stream
+
 docker run --env stream_ip=stream --env stream_port=12346 --network client_server_network -it demo-segmentation
+
+
+
+e = {"probe_ip": "probe","probe_port": "12345","count": 100000}
+
+f = {"probe_ip": "probe","probe_port": "12345","stream_ip":"0.0.0.0","stream_port":12346,"plain_stream":True}
+
+client = docker.from_env()
+
+probe = client.containers.create("demo-probe",environment=e, hostname="probe",network_mode="client_server_network")
+
+stream = client.containers.create("demo-stream",environment=f)
+
+
+network = client.networks.create("client_server_network", driver="bridge",attachable=True,check_duplicate=True)
+
+network.connect(probe,aliases=['probe'])
+
+
+import docker
+client = docker.from_env()
+sn = lambda a : str(client.networks.list())
+
+sc = lambda a : client.containers.list()
+
+pn = lambda a :client.networks.prune()
+
+pc = lambda a :client.containers.prune()
+
+c = lambda a : client.containers.get(a)
+
+n = lambda a : client.networks.get(a)
