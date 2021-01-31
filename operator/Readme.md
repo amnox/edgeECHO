@@ -58,6 +58,7 @@ network.connect(probe,aliases=['probe'])
 
 import docker
 client = docker.from_env()
+docker_client = docker.APIClient(base_url='unix://var/run/docker.sock')
 sn = lambda a : str(client.networks.list())
 
 sc = lambda a : client.containers.list()
@@ -69,3 +70,19 @@ pc = lambda a :client.containers.prune()
 c = lambda a : client.containers.get(a)
 
 n = lambda a : client.networks.get(a)
+
+
+networking_config = docker_client.create_networking_config({
+                'client_server_network': docker_client.create_endpoint_config(
+                    aliases=['probe'],
+                )
+            })
+'client_server_network': {'IPAMConfig': None, 'Links': None, 'Aliases': ['probe', '543c853a0000'], 'NetworkID': '16acea2b8f378b820e7d794eabea5cbec7076cdf2e3fc9f09b0a082be308ffb8', 'EndpointID': 'a13020589d57a8611de095dd772b3515edd556e4262d14a6258317099a9a3a70', 'Gateway': '192.168.224.1', 'IPAddress': '192.168.224.2', 'IPPrefixLen': 20, 'IPv6Gateway': '', 'GlobalIPv6Address': '', 'GlobalIPv6PrefixLen': 0, 'MacAddress': '02:42:c0:a8:e0:02', 'DriverOpts': None}}
+
+
+networking_config = docker_client.create_networking_config({'client_server_network': docker_client.create_endpoint_config(aliases=['dark'],hostname='probe')})
+
+probeme = docker_client.create_container(image='demo-probe',environment=e,networking_config=networking_config)
+
+docker_client.start(probeme)
+
