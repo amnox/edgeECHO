@@ -7,7 +7,7 @@ probe_ip = os.environ.get('probe_ip')
 probe_port = int(os.environ.get('probe_port'))
 stream_ip = os.environ.get('stream_ip')
 stream_port = int(os.environ.get('stream_port'))
-plain_stream = os.environ.get('count')
+plain_stream = os.environ.get('plain_stream')
 
 socket_message = {
         'sender':'stream',
