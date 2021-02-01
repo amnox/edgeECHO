@@ -24,7 +24,7 @@ def create_message(sender, m_data, m_type):
     return data.encode('ascii')
 
 def unpack_message(data):
-    print("".join(data))
+    #print("".join(data))
     return json.loads("".join(data))
 
 def segementation():
@@ -48,7 +48,8 @@ def Main():
     probe_stream = socket.socket(socket.AF_INET,socket.SOCK_STREAM) 
     probe_stream.connect((probe_ip,probe_port)) 
     seg = None
-    if plain_stream:
+    if plain_stream=='True':
+        print(probe_ip,probe_port,stream_ip,stream_port, plain_stream,type(plain_stream))
         probe_stream.send(create_message('streaming',1,3))
     else:
         print("waiting for segementation node")
