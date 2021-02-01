@@ -1,14 +1,14 @@
-Operator Description
+# Operator Description
 
-Responsibilites
+## Responsibilites
 
 - Keep track of system resources
 - Listen for incoming connections
 - Make connections and wire things up
 - Start and stop containers
 
-Workflows
-Prerequisite - Probe
+## Workflows
+_Note: Probe is a prerequisite for the following worflows_
 
 - Normal stream request
 -- Get probe details
@@ -19,70 +19,102 @@ Prerequisite - Probe
 -- Start a streaming server
 -- Start Segmentation Server
 
-
 Python Env Variables: https://www.nylas.com/blog/making-use-of-environment-variables-in-python/
 Docker env variables: https://docs.docker.com/compose/environment-variables/#set-environment-variables-in-containers
-Stream needs to know Probe IP
-Seg needs to know Stream IP
+Docker Python SDK: https://docker-py.readthedocs.io/en/stable/
 
-Python SDK
+# Setup
 
-- Start a container
+## Emulators
 
-
-
+### Probe
+```
+cd /operator/emulators/probe/
+docker build -t demo-probe .
+```
+### Streaming
+```
+cd /operator/emulators/streaming/
+docker build -t demo-stream .
+```
+### Segmentation
+```
+cd /operator/emulators/segmentation/
+docker build -t demo-segmentation .
+```
+### Test Connection
+```
+docker network create client_server_network
 
 docker run --env probe_ip=probe --env probe_port=12345 --env count=100000 --network-alias probe --network client_server_network -it demo-probe
 
-docker run --env probe_ip=probe --env probe_port=12345 --env stream_ip=stream --env stream_port=12346 --env plain_stream=True --network-alias stream --network client_server_network -it demo-stream
+docker run --env probe_ip=probe --env probe_port=12345 --env stream_ip=stream --env stream_port=12346 --env plain_stream=False --network-alias stream --network client_server_network -it demo-stream
 
 docker run --env stream_ip=stream --env stream_port=12346 --network client_server_network -it demo-segmentation
+```
+
+## Operator Server
+
+```
+cd operator/
+python -m pip install -r req.txt
+```
 
 
+## Cron Jobs
 
-e = {"probe_ip": "probe","probe_port": "12345","count": 100000}
+Before proceeding with this section make sure you note the complete location of repository locally
 
-f = {"probe_ip": "probe","probe_port": "12345","stream_ip":"0.0.0.0","stream_port":12346,"plain_stream":True}
+```
+crontab -e
+```
+Add this line at the end
 
-client = docker.from_env()
+```
+* * * * * cd {Operator Server Location} && python utils/cron.py > /dev/null 2>&1
+```
 
-probe = client.containers.create("demo-probe",environment=e, hostname="probe",network_mode="client_server_network")
+Save the changes and exit
 
-stream = client.containers.create("demo-stream",environment=f)
+**REST API REFERECE**
 
+* **URL**
+  http://127.0.0.1:5000/post/
 
-network = client.networks.create("client_server_network", driver="bridge",attachable=True,check_duplicate=True)
+* **Method:**
+  
+  `POST` 
+  
+*  **BODY**
 
-network.connect(probe,aliases=['probe'])
+   `JSON`
 
+* **Data Params**
 
-import docker
-client = docker.from_env()
-docker_client = docker.APIClient(base_url='unix://var/run/docker.sock')
-sn = lambda a : str(client.networks.list())
+  `count` <Integer>
+  `plain_stream` <Boolean>
 
-sc = lambda a : client.containers.list()
-
-pn = lambda a :client.networks.prune()
-
-pc = lambda a :client.containers.prune()
-
-c = lambda a : client.containers.get(a)
-
-n = lambda a : client.networks.get(a)
-
-
-networking_config = docker_client.create_networking_config({
-                'client_server_network': docker_client.create_endpoint_config(
-                    aliases=['probe'],
-                )
-            })
-'client_server_network': {'IPAMConfig': None, 'Links': None, 'Aliases': ['probe', '543c853a0000'], 'NetworkID': '16acea2b8f378b820e7d794eabea5cbec7076cdf2e3fc9f09b0a082be308ffb8', 'EndpointID': 'a13020589d57a8611de095dd772b3515edd556e4262d14a6258317099a9a3a70', 'Gateway': '192.168.224.1', 'IPAddress': '192.168.224.2', 'IPPrefixLen': 20, 'IPv6Gateway': '', 'GlobalIPv6Address': '', 'GlobalIPv6PrefixLen': 0, 'MacAddress': '02:42:c0:a8:e0:02', 'DriverOpts': None}}
+* **Success Response:**
 
 
-networking_config = docker_client.create_networking_config({'client_server_network': docker_client.create_endpoint_config(aliases=['probe'])})
+  * **Code:** 200 
+    **Content:** `{'session_id': 'EE705B6538693C50', 'network': 'network_4B7EA', 'probe': 'a07fa236c7c646bb84cc622f240c3da044e6ede346baecaae1c2d8f95cd78f1e', 'stream': '5719c748397f95c6fb82270c60353107aa29aca09194c60fda11791e33660dc9', 'segmentation': '9ed19c932812985bd0870c9654dcb6d71b5acb1407016286553824e911704b44'}`
+ 
 
-probeme = docker_client.create_container(image='demo-probe',environment=e,networking_config=networking_config)
+* **Sample Call:**
 
-docker_client.start(probeme)
-
+    ```
+    import requests
+    
+    url = "http://127.0.0.1:5000/post/"
+    
+    payload="{\"count\": 100000,\"plain_stream\":false}\n"
+    headers = {
+      'Content-Type': 'application/json'
+    }
+    
+    response = requests.request("POST", url, headers=headers, data=payload)
+    
+    print(response.text)
+    
+    ```

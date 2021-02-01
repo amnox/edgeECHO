@@ -54,8 +54,6 @@ class EdgeEchoSession:
         probe_name, probe_port = 'probe_'+self.__generate_id(5,'alpha'), self.__generate_id(5,'num')
         stream_name, stream_port = 'stream_'+self.__generate_id(5,'alpha'), self.__generate_id(5,'num')
         segmentation=None
-        print(probe_name,stream_name,self.plain_stream)
-        print(probe_port,stream_port)
         network = self.create_network()
         probe = self.create_probe(network,probe_name,probe_port,self.count)
         stream = self.create_stream(network,probe_name,probe_port,stream_name, stream_port, self.plain_stream)
