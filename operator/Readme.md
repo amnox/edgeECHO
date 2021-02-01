@@ -3,24 +3,36 @@
 ## Responsibilites
 
 - Keep track of system resources
+
 - Listen for incoming connections
+
 - Make connections and wire things up
+
 - Start and stop containers
 
 ## Workflows
 _Note: Probe is a prerequisite for the following worflows_
 
 - Normal stream request
+
 -- Get probe details
+
 -- Start a streaming server
+
 -- Return the location to requester
+
 - Segmented Stream Request
+
 -- Get probe details
+
 -- Start a streaming server
+
 -- Start Segmentation Server
 
 Python Env Variables: https://www.nylas.com/blog/making-use-of-environment-variables-in-python/
+
 Docker env variables: https://docs.docker.com/compose/environment-variables/#set-environment-variables-in-containers
+
 Docker Python SDK: https://docker-py.readthedocs.io/en/stable/
 
 # Setup
@@ -58,6 +70,7 @@ docker run --env stream_ip=stream --env stream_port=12346 --network client_serve
 ```
 cd operator/
 python -m pip install -r req.txt
+python operator.py
 ```
 
 
