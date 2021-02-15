@@ -20,7 +20,7 @@ def create_message(sender, m_data, m_type):
     return data.encode('ascii')
 
 def unpack_message(data):
-    print("".join(data))
+    #print("".join(data))
     return json.loads("".join(data))
 
 def Main(): 

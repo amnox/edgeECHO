@@ -2,7 +2,7 @@ import sqlite3
 from flask import Flask, request
 from datetime import datetime
 from EdgeEchoSession import EdgeEchoSession
-
+#import app
 app = Flask(__name__)
 DATABASE = 'database.db'
 DATE_FORMAT = '%Y-%m-%dT%H:%M:%S.%fZ'
@@ -40,6 +40,9 @@ def insert_data(data):
 @app.route('/',methods=['GET'])
 def hello_world():
     return 'Hello World'
+@app.route('/test', methods=['GET'])
+def test_route():
+    return "Working"
 
 @app.route('/post/',methods=['POST'])
 def show_post():
@@ -54,5 +57,3 @@ def show_post():
     insert_data(nodes)
     return nodes
 
-if __name__ == '__main__':
-    app.run(debug = True)
