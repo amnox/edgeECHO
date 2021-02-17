@@ -130,3 +130,34 @@ Save the changes and exit
     print(response.text)
     
     ```
+
+## Flask Server Setup(Remote)
+
+Install nginx set proxy at `/` to `127.0.0.1:5000', install gunicorn then create a venv called 'wsgienv' in the operator directory. Create wsgi.service inside `/etc/systemd/system/` and paste the following
+
+```
+[Unit]
+Description=Gunicorn instance to serve myproject
+After=network.target
+
+[Service]
+User=ubuntu
+Group=www-data
+WorkingDirectory=/home/ubuntu/code/o/edgeECHO/operator
+ExecStart=/home/ubuntu/code/o/edgeECHO/operator/wsgienv/bin/gunicorn -w 4 -b 127.0.0.1:5000 wsgi:app
+[Install]
+WantedBy=multi-user.target
+
+```
+
+Make changes to the paths accordingly. Then test if the app runs with gunicorn by executing the following command from operator directory
+
+`gunicorn -w 4 -b 127.0.0.1:5000 wsgi:app`
+
+If successful, start the spp in background using:
+
+```
+sudo systemctl enable wsgi.service
+sudo systemctl start wsgi.service
+sudo systemctl status wsgi.service
+```
